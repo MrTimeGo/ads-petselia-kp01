@@ -146,7 +146,14 @@ namespace lab2
             {
                 for (int j = 0; j < lenth; j++)
                 {
-                    Write(array[i,j] + "  ");
+                    if (array[i,j] < 10)
+                    {
+                        Write(array[i,j] + "   ");
+                    }
+                    else
+                    {
+                        Write(array[i,j] + "  ");
+                    }
                 }
                 WriteLine();
                 WriteLine();
@@ -177,7 +184,7 @@ namespace lab2
             {
                 for (int j = 0; j < M; j++)
                 {
-                    matrix[i,j] = rand.Next(10, 100);
+                    matrix[i,j] = rand.Next(1, 100);
                 }
             }
             return matrix;
