@@ -18,51 +18,81 @@ namespace lab3
             int[] input_array = new int[N];
             FillRandom(input_array);
             
-            Write("Input array: ");
-            WriteColorfulArray(input_array);
             //copying source array to sorted array
-            int[] array = new int[N];
-            Array.Copy(input_array, array, N);
+            int[] array_1 = new int[N];
+            Array.Copy(input_array, array_1, N);
+
+            //tracking swapped elements
+            int[] swapped_elements_array_1 = new int[N];
+            int swap_counter = 0;
             
 
             //sorting (1)
-            for (int i = 0; i < array.Length - 1; i++)
+            for (int i = 0; i < array_1.Length - 1; i++)
             {
                 int min = i;
-                for (int j = i + 1; j < array.Length; j++)
+                for (int j = i + 1; j < array_1.Length; j++)
                 {
-                    if (CountDigits(array[j]) < CountDigits(array[min]))
+                    if (CountDigits(array_1[j]) < CountDigits(array_1[min]))
                         min = j;
                 }
                 if (i != min)
                 {
-                    int swap = array[min];
-                    array[min] = array[i];
-                    array[i] = swap;
+                    int swap = array_1[min];
+                    array_1[min] = array_1[i];
+                    array_1[i] = swap;
+                    if (!CheckNumInArray(array_1[i], swapped_elements_array_1))
+                    {
+                        swapped_elements_array_1[swap_counter] = array_1[i];
+                        swap_counter++;
+                    }
+                    if (!CheckNumInArray(array_1[min], swapped_elements_array_1))
+                    {
+                        swapped_elements_array_1[swap_counter] = array_1[min];
+                        swap_counter++;
+                    }
                 }
             }
-            Write("(1):  ");
-            WriteColorfulArray(array);
-            
+            int[] swapped_elements_array_2 = new int[N];
+            Array.Copy(swapped_elements_array_1, swapped_elements_array_2, N);
+
+            int[] array_2 = new int[N];
+            Array.Copy(array_1, array_2, N);
+
             //sorting (2)
-            for (int i = 0; i < array.Length - 1; i++)
+            for (int i = 0; i < array_2.Length - 1; i++)
             {
                 int max = i;
-                for (int j = i + 1; j < array.Length; j++)
+                for (int j = i + 1; j < array_2.Length; j++)
                 {
-                    if (CountDigits(array[j]) == CountDigits(array[max]))
-                        if (array[j] > array[max])
+                    if (CountDigits(array_2[j]) == CountDigits(array_2[max]))
+                        if (array_2[j] > array_2[max])
                             max = j;
                 }
                 if (i != max)
                 {
-                    int swap = array[max];
-                    array[max] = array[i];
-                    array[i] = swap;
+                    int swap = array_2[max];
+                    array_2[max] = array_2[i];
+                    array_2[i] = swap;
+                    if (!CheckNumInArray(array_2[i], swapped_elements_array_2))
+                    {
+                        swapped_elements_array_2[swap_counter] = array_2[i];
+                        swap_counter++;
+                    }
+                    if (!CheckNumInArray(array_2[max], swapped_elements_array_2))
+                    {
+                        swapped_elements_array_2[swap_counter] = array_2[max];
+                        swap_counter++;
+                    }
                 }
             }
-            Write("(2):  ");
-            WriteColorfulArray(array);
+            
+            Write("Input array: ");
+            WriteColorfulArray(input_array, swapped_elements_array_2);
+            Write("(1): ");
+            WriteColorfulArray(array_1, swapped_elements_array_1);
+            Write("(2): ");
+            WriteColorfulArray(array_2, swapped_elements_array_2);
         }
         static int CountDigits(int num)
         {
@@ -81,7 +111,7 @@ namespace lab3
             {
                 int num = 0;
                 int sign = rand.Next(0,2);
-                while (CheckNumInArray(num, array))
+                while (CheckNumInArray(num, array) || num == 0)
                 {
                     int digits = rand.Next(1, 10);
                     if (sign == 0)
@@ -112,27 +142,67 @@ namespace lab3
             }
             WriteLine();
         }
-        static void WriteColorfulArray(int[] array)
+        static void WriteColorfulArray(int[] array, int[] swap_array)
         {
-            ConsoleColor[] colors = new ConsoleColor[10] {ConsoleColor.Blue, ConsoleColor.DarkCyan, ConsoleColor.Green, ConsoleColor.DarkMagenta, ConsoleColor.DarkRed, ConsoleColor.Gray, ConsoleColor.DarkYellow, ConsoleColor.Magenta, ConsoleColor.DarkGray, ConsoleColor.Red};
-            for (int i = 0; i < array.Length; i++)
+            if (CheckNumInArray(0, swap_array))
             {
-                ForegroundColor = colors[CountDigits(array[i]) - 1];
-                if (i + 1 != array.Length)
+                for (int i = 0; i < array.Length; i++)
                 {
-                    Write(array[i]);
+                    if (!CheckNumInArray(array[i], swap_array))
+                    {
+                        ForegroundColor = ConsoleColor.Red;
+                        if (i + 1 != array.Length)
+                        {
+                            Write(array[i]);
+                            ResetColor();
+                            Write(", ");
+                        }
+                        else
+                        {
+                            Write(array[i]);
+                            ResetColor();
+                            Write(".");
+                        }
+                    }
+                    else
+                    {
+                        if (i + 1 != array.Length)
+                        {
+                            Write(array[i]);
+                            Write(", ");
+                        }
+                        else
+                        {
+                            Write(array[i]);
+                            Write(".");
+                        }
+                    }
                     ResetColor();
-                    Write(", ");
                 }
-                else
-                {
-                    Write(array[i]);
-                    ResetColor();
-                    Write(".");
-                }
-                ResetColor();
+                WriteLine();
             }
-            WriteLine();
+            else
+            {
+                ConsoleColor[] colors = new ConsoleColor[10] {ConsoleColor.Blue, ConsoleColor.DarkCyan, ConsoleColor.Green, ConsoleColor.DarkMagenta, ConsoleColor.DarkRed, ConsoleColor.Gray, ConsoleColor.DarkYellow, ConsoleColor.Magenta, ConsoleColor.DarkGray, ConsoleColor.Red};
+                for (int i = 0; i < array.Length; i++)
+                {
+                    ForegroundColor = colors[CountDigits(array[i]) - 1];
+                    if (i + 1 != array.Length)
+                    {
+                        Write(array[i]);
+                        ResetColor();
+                        Write(", ");
+                    }
+                    else
+                    {
+                        Write(array[i]);
+                        ResetColor();
+                        Write(".");
+                    }
+                    ResetColor();
+                }
+                WriteLine();
+            }
         }
     }
 }
